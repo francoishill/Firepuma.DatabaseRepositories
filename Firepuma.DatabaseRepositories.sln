@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firepuma.DatabaseRepositories.Abstractions", "Firepuma.DatabaseRepositories.Abstractions\Firepuma.DatabaseRepositories.Abstractions.csproj", "{D8100F14-5A2D-4990-B7A0-76F97D13933A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{5DAECE1C-F84B-4DBB-AAF6-C036EA316784}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{80E8184B-420E-4B17-B877-D1C0D98EC725}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish-nuget-packages.yml = .github\workflows\publish-nuget-packages.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8100F14-5A2D-4990-B7A0-76F97D13933A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8100F14-5A2D-4990-B7A0-76F97D13933A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8100F14-5A2D-4990-B7A0-76F97D13933A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8100F14-5A2D-4990-B7A0-76F97D13933A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6} = {5DAECE1C-F84B-4DBB-AAF6-C036EA316784}
+		{80E8184B-420E-4B17-B877-D1C0D98EC725} = {37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6}
+	EndGlobalSection
+EndGlobal
