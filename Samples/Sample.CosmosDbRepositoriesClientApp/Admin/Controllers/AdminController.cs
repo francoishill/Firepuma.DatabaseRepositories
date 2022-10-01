@@ -1,6 +1,5 @@
 ﻿using Firepuma.DatabaseRepositories.CosmosDb.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
 using Sample.CosmosDbRepositoriesClientApp.Configuration;
 
 namespace Sample.CosmosDbRepositoriesClientApp.Admin.Controllers;
