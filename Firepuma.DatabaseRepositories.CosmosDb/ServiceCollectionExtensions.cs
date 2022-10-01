@@ -17,10 +17,15 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<CosmosDbRepositoriesOptions> configureOptions)
     {
-        if (configureOptions != null)
+        if (configureOptions == null)
         {
-            services.Configure(configureOptions);
+            throw new ArgumentNullException(nameof(configureOptions));
         }
+
+        services
+            .AddOptions<CosmosDbRepositoriesOptions>()
+            .Configure(configureOptions)
+            .ValidateDataAnnotations();
 
         services.AddTransient<ICosmosDbAdminService, CosmosDbAdminService>();
 
