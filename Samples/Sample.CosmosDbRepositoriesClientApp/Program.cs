@@ -21,7 +21,7 @@ builder.Services.AddCosmosDbRepository<
     IPetRepository,
     PetCosmosDbRepository>(
     CosmosContainers.Pets.Id,
-    (logger, container) => new PetCosmosDbRepository(logger, container));
+    (logger, container, _) => new PetCosmosDbRepository(logger, container));
 
 var app = builder.Build();
 
