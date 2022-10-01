@@ -1,0 +1,38 @@
+﻿name: Deploy Nuget packages
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOTNET_VERSION: '6.0'
+  PACKAGE_VERSION: "0.1.${{ github.run_number }}"
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v2
+
+      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          dotnet restore Firepuma.DatabaseRepositories.Abstractions
+          dotnet restore Firepuma.DatabaseRepositories.CosmosDb
+
+      - name: Test
+        run: dotnet test --no-restore
+
+      - name: Package
+        run: |
+          dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.Abstractions/Firepuma.DatabaseRepositories.Abstractions.csproj
+          dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.CosmosDb/Firepuma.DatabaseRepositories.CosmosDb.csproj
+
+      - name: Publish
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
