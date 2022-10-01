@@ -15,17 +15,23 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCosmosDbRepositories(
         this IServiceCollection services,
-        Action<CosmosDbRepositoriesOptions> configureOptions)
+        Action<CosmosDbRepositoriesOptions> configureOptions,
+        bool validateOnStart = true)
     {
         if (configureOptions == null)
         {
             throw new ArgumentNullException(nameof(configureOptions));
         }
 
-        services
+        var optionsBuilder = services
             .AddOptions<CosmosDbRepositoriesOptions>()
             .Configure(configureOptions)
             .ValidateDataAnnotations();
+
+        if (validateOnStart)
+        {
+            optionsBuilder.ValidateOnStart();
+        }
 
         services.AddTransient<ICosmosDbAdminService, CosmosDbAdminService>();
 
