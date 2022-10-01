@@ -1,6 +1,7 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.CosmosDb.Configuration;
+using Firepuma.DatabaseRepositories.CosmosDb.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtensions
         {
             services.Configure(configureOptions);
         }
+
+        services.AddTransient<ICosmosDbAdminService, CosmosDbAdminService>();
 
         services.AddSingleton<Database>(s =>
         {
