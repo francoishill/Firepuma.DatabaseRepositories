@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EB6D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.CosmosDbRepositoriesClientApp", "Samples\Sample.CosmosDbRepositoriesClientApp\Sample.CosmosDbRepositoriesClientApp.csproj", "{813039F2-665B-4C6F-A1B2-A78E2BE593B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firepuma.DatabaseRepositories.Tests", "Firepuma.DatabaseRepositories.Tests\Firepuma.DatabaseRepositories.Tests.csproj", "{C764E4E8-5BA1-41C5-99F3-438814A66433}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{813039F2-665B-4C6F-A1B2-A78E2BE593B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{813039F2-665B-4C6F-A1B2-A78E2BE593B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{813039F2-665B-4C6F-A1B2-A78E2BE593B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6} = {5DAECE1C-F84B-4DBB-AAF6-C036EA316784}

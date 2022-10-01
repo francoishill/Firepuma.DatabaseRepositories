@@ -25,6 +25,7 @@ jobs:
         run: |
           dotnet restore Firepuma.DatabaseRepositories.Abstractions
           dotnet restore Firepuma.DatabaseRepositories.CosmosDb
+          dotnet restore Firepuma.DatabaseRepositories.Tests
 
       - name: Test
         run: dotnet test --no-restore
