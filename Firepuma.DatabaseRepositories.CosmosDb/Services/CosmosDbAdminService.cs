@@ -1,7 +1,10 @@
 ﻿using System.Net;
+using Firepuma.DatabaseRepositories.CosmosDb.Services.Requests;
 using Firepuma.DatabaseRepositories.CosmosDb.Services.Results;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
+
+// ReSharper disable ArgumentsStyleNamedExpression
 
 namespace Firepuma.DatabaseRepositories.CosmosDb.Services;
 
@@ -19,20 +22,28 @@ internal class CosmosDbAdminService : ICosmosDbAdminService
     }
 
     public async Task<CreateContainersResult> CreateContainersIfNotExist(
-        IEnumerable<ContainerProperties> containersToCreate,
+        IEnumerable<ContainerSpecification> containersToCreate,
         CancellationToken cancellationToken)
     {
         var successfulContainers = new List<CreateContainersResult.SuccessfulContainerSummary>();
         var failedContainers = new List<CreateContainersResult.FailedContainerSummary>();
-        foreach (var container in containersToCreate)
+        foreach (var containerSpecification in containersToCreate)
         {
+            var container = containerSpecification.ContainerProperties;
+            var throughputProperties = containerSpecification.ThroughputProperties;
+            var requestOptions = containerSpecification.RequestOptions;
+
             _logger.LogDebug(
-                "Creating container {Container} with PartitionKeyPath {PartitionKeyPath}",
-                container.Id, container.PartitionKeyPath);
+                "Creating container {Container} with PartitionKeyPath {PartitionKeyPath} (throughput: {Throughput}, maxThroughput: {MaxThroughPut})",
+                container.Id, container.PartitionKeyPath, throughputProperties?.Throughput, throughputProperties?.AutoscaleMaxThroughput);
 
             try
             {
-                var containerResponse = await _cosmosDb.CreateContainerIfNotExistsAsync(container, cancellationToken: cancellationToken);
+                var containerResponse = await _cosmosDb.CreateContainerIfNotExistsAsync(
+                    container,
+                    throughputProperties: throughputProperties,
+                    requestOptions: requestOptions,
+                    cancellationToken: cancellationToken);
 
                 var wasNewlyCreated = containerResponse.StatusCode == HttpStatusCode.Created;
 
