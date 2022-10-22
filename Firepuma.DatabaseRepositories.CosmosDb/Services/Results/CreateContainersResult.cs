@@ -1,5 +1,7 @@
 ﻿namespace Firepuma.DatabaseRepositories.CosmosDb.Services.Results;
 
+#pragma warning disable CS8618
+
 public class CreateContainersResult
 {
     public List<SuccessfulContainerSummary> SuccessfulContainers { get; set; }

@@ -27,7 +27,7 @@ public abstract class QuerySpecificationEvaluatorBase<T> : IQuerySpecificationEv
                 throw new DuplicateOrderChainException();
             }
 
-            IOrderedQueryable<T> orderedQuery = null;
+            IOrderedQueryable<T>? orderedQuery = null;
             foreach (var orderExpression in querySpecification.OrderExpressions)
             {
                 if (orderExpression.OrderType == OrderTypeEnum.OrderBy)

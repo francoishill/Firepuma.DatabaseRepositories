@@ -18,7 +18,7 @@ public interface IRepository<T> where T : BaseEntity, new()
         IQuerySpecification<T> querySpecification,
         CancellationToken cancellationToken = default);
 
-    Task<T> GetItemOrDefaultAsync(
+    Task<T?> GetItemOrDefaultAsync(
         string id,
         CancellationToken cancellationToken = default);
 

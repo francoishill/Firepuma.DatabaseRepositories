@@ -100,7 +100,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
         return response.Resource;
     }
 
-    public async Task<T> GetItemOrDefaultAsync(
+    public async Task<T?> GetItemOrDefaultAsync(
         string id,
         CancellationToken cancellationToken)
     {
@@ -154,7 +154,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
         Logger.LogInformation(
             "Upserted item id {Id} in container {Container} consumed {Charge} RUs",
             item.Id, Container.Id, response.RequestCharge);
-        
+
         return response.Resource;
     }
 
@@ -163,6 +163,8 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
         bool ignoreETag,
         CancellationToken cancellationToken)
     {
+        if (item.Id == null) throw new ArgumentException("Item Id should not be null", nameof(item));
+
         var options = new ItemRequestOptions();
 
         if (!ignoreETag)

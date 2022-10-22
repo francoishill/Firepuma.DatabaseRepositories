@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+#pragma warning disable CS8618
+
 namespace Firepuma.DatabaseRepositories.CosmosDb.Configuration;
 
 public class CosmosDbRepositoriesOptions
