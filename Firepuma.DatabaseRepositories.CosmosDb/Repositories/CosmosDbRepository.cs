@@ -147,6 +147,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
             options.IfMatchEtag = item.ETag;
         }
 
+        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
         item.Id ??= GenerateId(item);
 
         var response = await Container.UpsertItemAsync<T>(item, ResolvePartitionKey(item.Id), options, cancellationToken);
