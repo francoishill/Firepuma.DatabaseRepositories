@@ -10,10 +10,6 @@ public interface IRepository<T> where T : BaseEntity, new()
         IQuerySpecification<T> querySpecification,
         CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<T>> GetItemsAsync(
-        string queryString,
-        CancellationToken cancellationToken = default);
-
     Task<int> GetItemsCountAsync(
         IQuerySpecification<T> querySpecification,
         CancellationToken cancellationToken = default);
