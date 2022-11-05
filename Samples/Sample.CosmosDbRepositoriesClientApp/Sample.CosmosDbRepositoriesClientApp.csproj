@@ -14,8 +14,4 @@
       <ProjectReference Include="..\..\Firepuma.DatabaseRepositories.CosmosDb\Firepuma.DatabaseRepositories.CosmosDb.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Admin" />
-    </ItemGroup>
-
 </Project>
