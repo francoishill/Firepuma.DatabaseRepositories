@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.CosmosDbRepositories
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firepuma.DatabaseRepositories.Tests", "Firepuma.DatabaseRepositories.Tests\Firepuma.DatabaseRepositories.Tests.csproj", "{C764E4E8-5BA1-41C5-99F3-438814A66433}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firepuma.DatabaseRepositories.MongoDb", "Firepuma.DatabaseRepositories.MongoDb\Firepuma.DatabaseRepositories.MongoDb.csproj", "{46394C90-39AA-4BB8-93F6-78C87AA972F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.MongoDbRepositoriesClientApp", "Samples\Sample.MongoDbRepositoriesClientApp\Sample.MongoDbRepositoriesClientApp.csproj", "{853E8115-E4DF-42B8-B528-CD2532CF5D10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,10 +50,19 @@ Global
 		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C764E4E8-5BA1-41C5-99F3-438814A66433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46394C90-39AA-4BB8-93F6-78C87AA972F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46394C90-39AA-4BB8-93F6-78C87AA972F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46394C90-39AA-4BB8-93F6-78C87AA972F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46394C90-39AA-4BB8-93F6-78C87AA972F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{853E8115-E4DF-42B8-B528-CD2532CF5D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{853E8115-E4DF-42B8-B528-CD2532CF5D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{853E8115-E4DF-42B8-B528-CD2532CF5D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{853E8115-E4DF-42B8-B528-CD2532CF5D10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6} = {5DAECE1C-F84B-4DBB-AAF6-C036EA316784}
 		{80E8184B-420E-4B17-B877-D1C0D98EC725} = {37D2D15A-AA9B-4773-BB5A-D2DE9417C5E6}
 		{813039F2-665B-4C6F-A1B2-A78E2BE593B7} = {EB6DBDB8-9C4A-4162-BF7C-964F97B558BD}
+		{853E8115-E4DF-42B8-B528-CD2532CF5D10} = {EB6DBDB8-9C4A-4162-BF7C-964F97B558BD}
 	EndGlobalSection
 EndGlobal
