@@ -73,7 +73,7 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
     {
         if (!string.IsNullOrWhiteSpace(item.Id))
         {
-            throw new InvalidOperationException($"Item Id should be specified when calling MongoDbRepository.AddItemAsync, it is auto-generated (item id {item.Id})");
+            throw new InvalidOperationException($"Item Id should not be specified when calling MongoDbRepository.AddItemAsync, it is auto-generated (item id {item.Id})");
         }
 
         item.Id = GenerateId(item);
