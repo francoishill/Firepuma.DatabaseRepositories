@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMongoDbRepositories(options =>
 {
-    options.Url = configuration.GetValue<string>("MongoDb:Url");
+    options.ConnectionString = configuration.GetValue<string>("MongoDb:ConnectionString");
+    options.DatabaseName = configuration.GetValue<string>("MongoDb:DatabaseName");
 });
 builder.Services.AddMongoDbRepository<
     PetEntity,

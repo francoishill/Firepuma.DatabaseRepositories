@@ -7,5 +7,8 @@ namespace Firepuma.DatabaseRepositories.MongoDb.Configuration;
 public class MongoDbRepositoriesOptions
 {
     [Required]
-    public string Url { get; set; } = null!;
+    public string ConnectionString { get; set; } = null!;
+
+    [Required]
+    public string DatabaseName { get; set; }
 }

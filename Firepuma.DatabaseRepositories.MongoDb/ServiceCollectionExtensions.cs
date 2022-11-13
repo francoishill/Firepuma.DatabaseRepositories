@@ -5,6 +5,7 @@ using Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 
 // ReSharper disable RedundantTypeArgumentsOfMethod
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
     public static void AddMongoDbRepositories(
         this IServiceCollection services,
         Action<MongoDbRepositoriesOptions> configureOptions,
+        ConventionPack? customConventionPack = null,
         bool validateOnStart = true)
     {
         if (configureOptions == null)
@@ -37,9 +39,9 @@ public static class ServiceCollectionExtensions
         {
             var options = s.GetRequiredService<IOptions<MongoDbRepositoriesOptions>>().Value;
 
-            var mongoUrl = new MongoUrl(options.Url);
+            var mongoUrl = new MongoUrl(options.ConnectionString);
 
-            var database = MongoConfigurationHelper.ConfigureMongoDatabase(mongoUrl);
+            var database = MongoConfigurationHelper.ConfigureMongoDatabase(customConventionPack, mongoUrl, options.DatabaseName);
             return database;
         });
     }

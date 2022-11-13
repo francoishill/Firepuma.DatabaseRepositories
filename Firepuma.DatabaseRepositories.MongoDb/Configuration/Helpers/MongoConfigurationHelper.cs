@@ -4,41 +4,50 @@ using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
-namespace Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers
+namespace Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
+
+internal static class MongoConfigurationHelper
 {
-    public static class MongoConfigurationHelper
+    public static IMongoDatabase ConfigureMongoDatabase(
+        ConventionPack? customConventionPack,
+        MongoUrl mongoUrl,
+        string databaseName)
     {
-        public static IMongoDatabase ConfigureMongoDatabase(MongoUrl mongoUrl)
+        if (!string.IsNullOrWhiteSpace(mongoUrl.DatabaseName))
         {
-            var pack = new ConventionPack
-            {
-                new EnumRepresentationConvention(BsonType.String),
-                new GuidAsStringRepresentationConvention(),
-            };
-
-            ConventionRegistry.Register("Custom Conventions", pack, _ => true);
-
-            var mongoSettings = MongoClientSettings.FromUrl(mongoUrl);
-
-            var mongoClient = new MongoClient(mongoSettings);
-
-            return mongoClient.GetDatabase(mongoUrl.DatabaseName);
+            throw new InvalidOperationException(
+                $"Please ensure no database is contained as part of the mongoUrl, database should be specified with the {nameof(databaseName)}. For example, " +
+                $"`mongodb://my-mongo-server` is correct but `mongodb://my-mongo-server/my_database_name` format is incorrect.");
         }
 
-        private class GuidAsStringRepresentationConvention : ConventionBase, IMemberMapConvention
+        var pack = customConventionPack ?? new ConventionPack
         {
-            public void Apply(BsonMemberMap memberMap)
+            new EnumRepresentationConvention(BsonType.String),
+            new GuidAsStringRepresentationConvention(),
+        };
+
+        ConventionRegistry.Register("Custom Conventions", pack, _ => true);
+
+        var mongoSettings = MongoClientSettings.FromUrl(mongoUrl);
+
+        var mongoClient = new MongoClient(mongoSettings);
+
+        return mongoClient.GetDatabase(databaseName);
+    }
+
+    private class GuidAsStringRepresentationConvention : ConventionBase, IMemberMapConvention
+    {
+        public void Apply(BsonMemberMap memberMap)
+        {
+            if (memberMap.MemberType == typeof(Guid))
             {
-                if (memberMap.MemberType == typeof(Guid))
-                {
-                    memberMap.SetSerializer(
-                        new GuidSerializer(BsonType.String));
-                }
-                else if (memberMap.MemberType == typeof(Guid?))
-                {
-                    memberMap.SetSerializer(
-                        new NullableSerializer<Guid>(new GuidSerializer(BsonType.String)));
-                }
+                memberMap.SetSerializer(
+                    new GuidSerializer(BsonType.String));
+            }
+            else if (memberMap.MemberType == typeof(Guid?))
+            {
+                memberMap.SetSerializer(
+                    new NullableSerializer<Guid>(new GuidSerializer(BsonType.String)));
             }
         }
     }
