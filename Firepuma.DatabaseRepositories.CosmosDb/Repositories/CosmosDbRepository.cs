@@ -6,6 +6,8 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Logging;
 
+// ReSharper disable VirtualMemberNeverOverridden.Global
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable RedundantTypeArgumentsOfMethod
 
@@ -157,7 +159,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
             item.Id, Container.Id, response.RequestCharge);
     }
 
-    private IQueryable<T> ApplyQuery(IQuerySpecification<T> querySpecification)
+    protected virtual IQueryable<T> ApplyQuery(IQuerySpecification<T> querySpecification)
     {
         var evaluator = new CosmosDbQuerySpecificationEvaluator<T>();
         var inputQuery = Container.GetItemLinqQueryable<T>();

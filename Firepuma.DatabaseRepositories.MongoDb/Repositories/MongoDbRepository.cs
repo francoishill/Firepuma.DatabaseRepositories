@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+// ReSharper disable VirtualMemberNeverOverridden.Global
+
 namespace Firepuma.DatabaseRepositories.MongoDb.Repositories;
 
 public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity, new()
@@ -25,10 +27,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
 
     protected abstract string GenerateId(T entity);
 
-    private string CollectionNameForLogs => Collection.CollectionNamespace.FullName;
+    protected virtual string CollectionNameForLogs => Collection.CollectionNamespace.FullName;
 
-    private static string GenerateETag() => $"{DateTimeOffset.UtcNow:O}-{Guid.NewGuid().ToString()}";
-    private static long GetNowTimestampInSeconds() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    protected virtual string GenerateETag() => $"{DateTimeOffset.UtcNow:O}-{Guid.NewGuid().ToString()}";
+    protected virtual long GetNowTimestampInSeconds() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     public async Task<IEnumerable<T>> GetItemsAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
     {
@@ -197,7 +199,7 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
         }
     }
 
-    private IMongoQueryable<T> ApplyQuery(IQuerySpecification<T> querySpecification)
+    protected virtual IMongoQueryable<T> ApplyQuery(IQuerySpecification<T> querySpecification)
     {
         var evaluator = new MongoDbQuerySpecificationEvaluator<T>();
         var inputQuery = Collection.AsQueryable();
