@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Repositories;

@@ -7,7 +7,6 @@ using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
-
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable RedundantTypeArgumentsOfMethod
 
