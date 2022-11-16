@@ -1,7 +1,7 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using Newtonsoft.Json;
 
-namespace Firepuma.DatabaseRepositories.CosmosDb.Entities;
+namespace Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
 
 public class BaseCosmosDbEntity : IEntity
 {

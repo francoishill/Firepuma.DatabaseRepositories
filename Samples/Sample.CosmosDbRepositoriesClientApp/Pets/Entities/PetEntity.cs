@@ -1,4 +1,4 @@
-﻿using Firepuma.DatabaseRepositories.CosmosDb.Entities;
+﻿using Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
 
 #pragma warning disable CS8618
 

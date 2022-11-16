@@ -1,6 +1,6 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Configuration;
-using Firepuma.DatabaseRepositories.CosmosDb.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;

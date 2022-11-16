@@ -7,7 +7,7 @@ on:
 
 env:
   DOTNET_VERSION: '6.0'
-  PACKAGE_VERSION: "0.11.1"
+  PACKAGE_VERSION: "0.11.2"
 
 jobs:
   build-and-deploy:
@@ -25,7 +25,9 @@ jobs:
         run: |
           dotnet restore Firepuma.DatabaseRepositories.Abstractions
           dotnet restore Firepuma.DatabaseRepositories.CosmosDb
+          dotnet restore Firepuma.DatabaseRepositories.CosmosDb.Abstractions
           dotnet restore Firepuma.DatabaseRepositories.MongoDb
+          dotnet restore Firepuma.DatabaseRepositories.MongoDb.Abstractions
           dotnet restore Firepuma.DatabaseRepositories.Tests
 
       - name: Test
@@ -35,7 +37,9 @@ jobs:
         run: |
           dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.Abstractions/Firepuma.DatabaseRepositories.Abstractions.csproj
           dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.CosmosDb/Firepuma.DatabaseRepositories.CosmosDb.csproj
+          dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.CosmosDb.Abstractions/Firepuma.DatabaseRepositories.CosmosDb.Abstractions.csproj
           dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.MongoDb/Firepuma.DatabaseRepositories.MongoDb.csproj
+          dotnet pack --configuration Release --output . -p:PackageVersion=${{ env.PACKAGE_VERSION }} Firepuma.DatabaseRepositories.MongoDb.Abstractions/Firepuma.DatabaseRepositories.MongoDb.Abstractions.csproj
 
       - name: Publish
         run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

@@ -1,4 +1,4 @@
-﻿using Firepuma.DatabaseRepositories.MongoDb.Entities;
+﻿using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 
 #pragma warning disable CS8618
 

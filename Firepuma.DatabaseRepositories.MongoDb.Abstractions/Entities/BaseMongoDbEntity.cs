@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Firepuma.DatabaseRepositories.MongoDb.Entities;
+namespace Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 
 public class BaseMongoDbEntity : IEntity
 {

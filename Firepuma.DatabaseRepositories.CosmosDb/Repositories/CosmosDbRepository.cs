@@ -1,6 +1,6 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
-using Firepuma.DatabaseRepositories.CosmosDb.Entities;
+using Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Queries;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;

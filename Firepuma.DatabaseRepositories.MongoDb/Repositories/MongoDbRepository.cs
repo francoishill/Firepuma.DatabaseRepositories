@@ -2,7 +2,7 @@
 using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
-using Firepuma.DatabaseRepositories.MongoDb.Entities;
+using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Queries;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;

@@ -1,7 +1,7 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
-using Firepuma.DatabaseRepositories.MongoDb.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

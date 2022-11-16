@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Firepuma.DatabaseRepositories.Abstractions\Firepuma.DatabaseRepositories.Abstractions.csproj" />
+      <ProjectReference Include="..\Firepuma.DatabaseRepositories.CosmosDb.Abstractions\Firepuma.DatabaseRepositories.CosmosDb.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>
