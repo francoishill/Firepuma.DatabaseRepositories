@@ -4,7 +4,7 @@ using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 namespace Firepuma.DatabaseRepositories.Abstractions.Repositories;
 
 // Thanks for inspiration to: https://medium.com/swlh/clean-architecture-with-partitioned-repository-pattern-using-azure-cosmos-db-62241854cbc5
-public interface IRepository<T> where T : IEntity, new()
+public interface IRepository<T> where T : IEntity
 {
     Task<IEnumerable<T>> GetItemsAsync(
         IQuerySpecification<T> querySpecification,
