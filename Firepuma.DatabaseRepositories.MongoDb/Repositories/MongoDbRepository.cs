@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
-using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.MongoDb.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Queries;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -13,7 +13,7 @@ using MongoDB.Driver.Linq;
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Repositories;
 
-public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity, new()
+public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoDbEntity, new()
 {
     protected readonly ILogger Logger;
     protected readonly IMongoCollection<T> Collection;
@@ -31,7 +31,6 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
     protected virtual string CollectionNameForLogs => Collection.CollectionNamespace.FullName;
 
     protected virtual string GenerateETag() => $"{DateTimeOffset.UtcNow:O}-{Guid.NewGuid().ToString()}";
-    protected virtual long GetNowTimestampInSeconds() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     public async Task<IEnumerable<T>> GetItemsAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
     {
@@ -81,7 +80,6 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
 
         item.Id = GenerateId(item);
         item.ETag = GenerateETag();
-        item.Timestamp = GetNowTimestampInSeconds();
 
         await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
 
@@ -109,7 +107,6 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseEntity
         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
         item.Id ??= GenerateId(item);
         item.ETag = GenerateETag();
-        item.Timestamp = GetNowTimestampInSeconds();
 
         Logger.LogInformation(
             "Upserted item id {Id} in collection {Collection}",

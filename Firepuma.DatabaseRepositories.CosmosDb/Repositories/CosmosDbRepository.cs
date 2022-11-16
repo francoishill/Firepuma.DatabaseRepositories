@@ -1,6 +1,6 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
-using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
+﻿using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.CosmosDb.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Queries;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Firepuma.DatabaseRepositories.CosmosDb.Repositories;
 
-public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntity, new()
+public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmosDbEntity, new()
 {
     protected readonly ILogger Logger;
     protected readonly Container Container;
@@ -89,7 +89,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseEntit
         }
         catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            return null;
+            return default;
         }
     }
 

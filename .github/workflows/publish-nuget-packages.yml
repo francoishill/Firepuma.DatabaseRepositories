@@ -7,7 +7,7 @@ on:
 
 env:
   DOTNET_VERSION: '6.0'
-  PACKAGE_VERSION: "0.9.1"
+  PACKAGE_VERSION: "0.10.0"
 
 jobs:
   build-and-deploy:

@@ -11,10 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Firepuma.DatabaseRepositories.MongoDb\Firepuma.DatabaseRepositories.MongoDb.csproj" />
     </ItemGroup>
 

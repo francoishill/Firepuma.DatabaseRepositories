@@ -1,10 +1,10 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
+﻿using Firepuma.DatabaseRepositories.CosmosDb.Entities;
 
 #pragma warning disable CS8618
 
 namespace Sample.CosmosDbRepositoriesClientApp.Pets.Entities;
 
-public class PetEntity : BaseEntity
+public class PetEntity : BaseCosmosDbEntity
 {
     public string Type { get; set; }
     public string Name { get; set; }

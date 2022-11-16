@@ -1,6 +1,6 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
-using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+﻿using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.CosmosDb.Configuration;
+using Firepuma.DatabaseRepositories.CosmosDb.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         string containerName,
         Func<ILogger<TClass>, Container, IServiceProvider, TClass> classFactory)
-        where TEntity : BaseEntity, new()
+        where TEntity : BaseCosmosDbEntity, new()
         where TInterface : class, IRepository<TEntity>
         where TClass : class, TInterface
     {
