@@ -6,8 +6,8 @@ namespace Sample.MongoDbRepositoriesClientApp.Pets.Entities;
 
 public class PetEntity : BaseMongoDbEntity
 {
-    public string Type { get; set; }
-    public string Name { get; set; }
-    public DateTime BornOn { get; set; }
-    public DateTime ArrivedOn { get; set; }
+    public required string Type { get; set; }
+    public required string Name { get; set; }
+    public required DateTime BornOn { get; set; }
+    public required DateTime ArrivedOn { get; set; }
 }

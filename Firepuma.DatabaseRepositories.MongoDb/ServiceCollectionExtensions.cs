@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         string collectionName,
         Func<ILogger<TClass>, IMongoCollection<TEntity>, IServiceProvider, TClass> classFactory)
-        where TEntity : BaseMongoDbEntity, new()
+        where TEntity : BaseMongoDbEntity
         where TInterface : class, IRepository<TEntity>
         where TClass : class, TInterface
     {

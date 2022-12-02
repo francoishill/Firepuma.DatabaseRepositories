@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         string containerName,
         Func<ILogger<TClass>, Container, IServiceProvider, TClass> classFactory)
-        where TEntity : BaseCosmosDbEntity, new()
+        where TEntity : BaseCosmosDbEntity
         where TInterface : class, IRepository<TEntity>
         where TClass : class, TInterface
     {

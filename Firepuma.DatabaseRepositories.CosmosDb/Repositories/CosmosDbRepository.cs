@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Firepuma.DatabaseRepositories.CosmosDb.Repositories;
 
-public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmosDbEntity, new()
+public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmosDbEntity
 {
     protected readonly ILogger Logger;
     protected readonly Container Container;

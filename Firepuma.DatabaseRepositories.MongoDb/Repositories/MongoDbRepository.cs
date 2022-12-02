@@ -14,7 +14,7 @@ using MongoDB.Driver.Linq;
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Repositories;
 
-public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoDbEntity, new()
+public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoDbEntity
 {
     protected readonly ILogger Logger;
     protected readonly IMongoCollection<T> Collection;

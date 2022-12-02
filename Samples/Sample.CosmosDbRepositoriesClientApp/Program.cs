@@ -11,10 +11,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = configuration.GetValue<string>("CosmosDb:ConnectionString") ?? throw new Exception("CosmosDb:ConnectionString config is required");
+var databaseId = configuration.GetValue<string>("CosmosDb:DatabaseId") ?? throw new Exception("CosmosDb:DatabaseId config is required");
 builder.Services.AddCosmosDbRepositories(options =>
 {
-    options.ConnectionString = configuration.GetValue<string>("CosmosDb:ConnectionString");
-    options.DatabaseId = configuration.GetValue<string>("CosmosDb:DatabaseId");
+    options.ConnectionString = connectionString;
+    options.DatabaseId = databaseId;
 });
 builder.Services.AddCosmosDbRepository<
     PetEntity,

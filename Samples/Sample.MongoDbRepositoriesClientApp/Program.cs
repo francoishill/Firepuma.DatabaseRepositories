@@ -13,10 +13,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = configuration.GetValue<string>("MongoDb:ConnectionString") ?? throw new Exception("MongoDb:ConnectionString config is required");
+var databaseName = configuration.GetValue<string>("MongoDb:DatabaseName") ?? throw new Exception("MongoDb:DatabaseName config is required");
 builder.Services.AddMongoDbRepositories(options =>
 {
-    options.ConnectionString = configuration.GetValue<string>("MongoDb:ConnectionString");
-    options.DatabaseName = configuration.GetValue<string>("MongoDb:DatabaseName");
+    options.ConnectionString = connectionString;
+    options.DatabaseName = databaseName;
 });
 builder.Services.AddMongoDbRepository<
     PetEntity,
