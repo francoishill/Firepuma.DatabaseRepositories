@@ -2,6 +2,7 @@
 using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
 using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Queries;
 using Microsoft.Extensions.Logging;
@@ -70,6 +71,21 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
             id, CollectionNameForLogs);
 
         return item;
+    }
+
+    public async Task<T?> GetItemOrDefaultAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
+    {
+        var queryable = ApplyQuery(querySpecification);
+        try
+        {
+            return await queryable.SingleOrDefaultAsync(cancellationToken);
+        }
+        catch (InvalidOperationException invalidOperationException) when (invalidOperationException.Message.Contains("Sequence contains more than one element", StringComparison.OrdinalIgnoreCase))
+        {
+            var queryType = querySpecification.GetType();
+            var queryTypeName = queryType.FullName ?? queryType.AssemblyQualifiedName;
+            throw new MultipleResultsInsteadOfSingleException($"Query type: {queryTypeName}");
+        }
     }
 
     public async Task<T> AddItemAsync(T item, CancellationToken cancellationToken = default)

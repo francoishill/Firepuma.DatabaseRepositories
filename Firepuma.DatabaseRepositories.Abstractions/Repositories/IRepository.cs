@@ -18,6 +18,10 @@ public interface IRepository<T> where T : IEntity
         string id,
         CancellationToken cancellationToken = default);
 
+    Task<T?> GetItemOrDefaultAsync(
+        IQuerySpecification<T> querySpecification,
+        CancellationToken cancellationToken = default);
+
     Task<T> AddItemAsync(
         T item,
         CancellationToken cancellationToken = default);

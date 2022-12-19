@@ -1,5 +1,6 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
+using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
 using Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.CosmosDb.Queries;
 using Microsoft.Azure.Cosmos;
@@ -91,6 +92,21 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             return default;
         }
+    }
+
+    public async Task<T?> GetItemOrDefaultAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
+    {
+        //TODO: find a more optimized way than downloading Items and checking for Count>1 afterwards
+        var items = (await GetItemsAsync(querySpecification, cancellationToken)).ToList();
+
+        if (items.Count > 1)
+        {
+            var queryType = querySpecification.GetType();
+            var queryTypeName = queryType.FullName ?? queryType.AssemblyQualifiedName;
+            throw new MultipleResultsInsteadOfSingleException($"Query type: {queryTypeName}");
+        }
+
+        return items.FirstOrDefault();
     }
 
     public async Task<T> AddItemAsync(
