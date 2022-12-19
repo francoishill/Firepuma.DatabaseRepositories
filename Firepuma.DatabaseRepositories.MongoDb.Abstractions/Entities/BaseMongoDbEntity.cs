@@ -15,5 +15,5 @@ public class BaseMongoDbEntity : IEntity
     [JsonProperty(PropertyName = "ETag")]
     public string? ETag { get; set; }
 
-    public DateTime Timestamp => ObjectId.Parse(Id).CreationTime;
+    public DateTime Timestamp => !string.IsNullOrWhiteSpace(Id) ? ObjectId.Parse(Id).CreationTime : DateTime.UtcNow;
 }
