@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Configuration;
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
 
@@ -11,7 +12,8 @@ internal static class MongoConfigurationHelper
     public static IMongoDatabase ConfigureMongoDatabase(
         ConventionPack? customConventionPack,
         MongoUrl mongoUrl,
-        string databaseName)
+        string databaseName,
+        Action<ClusterBuilder>? configureClusterBuilder)
     {
         if (!string.IsNullOrWhiteSpace(mongoUrl.DatabaseName))
         {
@@ -29,6 +31,14 @@ internal static class MongoConfigurationHelper
         ConventionRegistry.Register("Custom Conventions", pack, _ => true);
 
         var mongoSettings = MongoClientSettings.FromUrl(mongoUrl);
+
+        mongoSettings.ClusterConfigurator = cb =>
+        {
+            if (configureClusterBuilder != null)
+            {
+                configureClusterBuilder(cb);
+            }
+        };
 
         var mongoClient = new MongoClient(mongoSettings);
 

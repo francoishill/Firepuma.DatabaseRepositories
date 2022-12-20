@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Configuration;
 
 // ReSharper disable RedundantTypeArgumentsOfMethod
 
@@ -18,7 +19,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<MongoDbRepositoriesOptions> configureOptions,
         ConventionPack? customConventionPack = null,
-        bool validateOnStart = true)
+        bool validateOnStart = true,
+        Action<ClusterBuilder>? configureClusterBuilder = null)
     {
         if (configureOptions == null)
         {
@@ -41,7 +43,11 @@ public static class ServiceCollectionExtensions
 
             var mongoUrl = new MongoUrl(options.ConnectionString);
 
-            var database = MongoConfigurationHelper.ConfigureMongoDatabase(customConventionPack, mongoUrl, options.DatabaseName);
+            var database = MongoConfigurationHelper.ConfigureMongoDatabase(
+                customConventionPack,
+                mongoUrl,
+                options.DatabaseName,
+                configureClusterBuilder);
             return database;
         });
     }
