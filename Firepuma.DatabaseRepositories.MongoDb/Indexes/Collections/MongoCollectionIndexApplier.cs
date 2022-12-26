@@ -19,7 +19,12 @@ internal class MongoCollectionIndexApplier<TEntity> : IMongoCollectionIndexAppli
 
     public async Task ApplyIndexes(CancellationToken cancellationToken)
     {
-        var indexes = _indexesFactory();
+        var indexes = _indexesFactory().ToArray();
+        if (!indexes.Any())
+        {
+            return;
+        }
+
         await _collection.Indexes.CreateManyAsync(indexes, cancellationToken);
     }
 }
