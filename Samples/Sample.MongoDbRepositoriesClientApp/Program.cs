@@ -25,7 +25,8 @@ builder.Services.AddMongoDbRepository<
     IPetRepository,
     PetMongoDbRepository>(
     MongoCollectionNames.Pets,
-    (logger, container, _) => new PetMongoDbRepository(logger, container));
+    (logger, container, _) => new PetMongoDbRepository(logger, container),
+    PetEntity.GetSchemaIndexes);
 
 
 var app = builder.Build();

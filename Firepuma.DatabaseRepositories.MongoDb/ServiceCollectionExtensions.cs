@@ -1,7 +1,10 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
+using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Indexes;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
+using Firepuma.DatabaseRepositories.MongoDb.Indexes;
+using Firepuma.DatabaseRepositories.MongoDb.Indexes.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -50,12 +53,15 @@ public static class ServiceCollectionExtensions
                 configureClusterBuilder);
             return database;
         });
+
+        services.AddTransient<IMongoIndexesApplier, MongoIndexesApplier>();
     }
 
     public static void AddMongoDbRepository<TEntity, TInterface, TClass>(
         this IServiceCollection services,
         string collectionName,
-        Func<ILogger<TClass>, IMongoCollection<TEntity>, IServiceProvider, TClass> classFactory)
+        Func<ILogger<TClass>, IMongoCollection<TEntity>, IServiceProvider, TClass> classFactory,
+        Func<IEnumerable<CreateIndexModel<TEntity>>> indexesFactory)
         where TEntity : BaseMongoDbEntity
         where TInterface : class, IRepository<TEntity>
         where TClass : class, TInterface
@@ -68,6 +74,14 @@ public static class ServiceCollectionExtensions
             var collection = database.GetCollection<TEntity>(collectionName);
 
             return classFactory(logger, collection, s);
+        });
+
+        services.AddTransient<IMongoCollectionIndexApplier>(s =>
+        {
+            var database = s.GetRequiredService<IMongoDatabase>();
+            var collection = database.GetCollection<TEntity>(collectionName);
+
+            return new MongoCollectionIndexApplier<TEntity>(collection, indexesFactory);
         });
     }
 }
