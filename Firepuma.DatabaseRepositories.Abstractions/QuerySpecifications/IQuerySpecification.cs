@@ -8,7 +8,7 @@ public interface IQuerySpecification<T>
 
     List<Expression<Func<T, bool>>> WhereExpressions { get; }
 
-    List<(Expression<Func<T, object>> KeySelector, OrderTypeEnum OrderType)>? OrderExpressions { get; }
+    List<(Expression<Func<T, object>> KeySelector, OrderTypeEnum OrderType)> OrderExpressions { get; }
 
     int? Take { get; }
 

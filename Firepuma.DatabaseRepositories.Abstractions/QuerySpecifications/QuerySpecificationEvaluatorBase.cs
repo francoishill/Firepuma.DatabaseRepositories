@@ -20,7 +20,7 @@ public abstract class QuerySpecificationEvaluatorBase<T> : IQuerySpecificationEv
             .WhereExpressions
             .Aggregate(inputQuery, (current, criteria) => current.Where(criteria));
 
-        if (querySpecification.OrderExpressions != null && querySpecification.OrderExpressions.Any())
+        if (querySpecification.OrderExpressions.Any())
         {
             if (querySpecification.OrderExpressions.Count(x => x.OrderType is OrderTypeEnum.OrderBy or OrderTypeEnum.OrderByDescending) > 1)
             {
