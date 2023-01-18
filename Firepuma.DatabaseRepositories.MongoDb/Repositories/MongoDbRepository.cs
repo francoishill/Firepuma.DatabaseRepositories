@@ -114,7 +114,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
     {
         var oldETag = item.ETag;
 
-        var options = new ReplaceOptions();
+        var options = new ReplaceOptions
+        {
+            IsUpsert = true,
+        };
 
         Expression<Func<T, bool>> filter =
             ignoreETag
