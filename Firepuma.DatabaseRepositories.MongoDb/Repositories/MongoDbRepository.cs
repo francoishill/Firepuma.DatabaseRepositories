@@ -88,6 +88,30 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
         }
     }
 
+    public async Task<T> GetItemAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var itemOrDefault = await GetItemOrDefaultAsync(id, cancellationToken);
+
+        if (itemOrDefault == null)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), id);
+        }
+
+        return itemOrDefault;
+    }
+
+    public async Task<T> GetItemAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
+    {
+        var itemOrDefault = await GetItemOrDefaultAsync(querySpecification, cancellationToken);
+
+        if (itemOrDefault == null)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), $"query type {querySpecification.GetType().Name}");
+        }
+
+        return itemOrDefault;
+    }
+
     public async Task<T> AddItemAsync(T item, CancellationToken cancellationToken = default)
     {
         if (!string.IsNullOrWhiteSpace(item.Id))

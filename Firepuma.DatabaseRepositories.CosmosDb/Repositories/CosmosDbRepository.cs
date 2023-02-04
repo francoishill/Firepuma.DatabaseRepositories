@@ -1,4 +1,5 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
+﻿using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
+using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
 using Firepuma.DatabaseRepositories.CosmosDb.Abstractions.Entities;
@@ -107,6 +108,30 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         }
 
         return items.FirstOrDefault();
+    }
+
+    public async Task<T> GetItemAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var itemOrDefault = await GetItemOrDefaultAsync(id, cancellationToken);
+
+        if (itemOrDefault == null)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), id);
+        }
+
+        return itemOrDefault;
+    }
+
+    public async Task<T> GetItemAsync(IQuerySpecification<T> querySpecification, CancellationToken cancellationToken = default)
+    {
+        var itemOrDefault = await GetItemOrDefaultAsync(querySpecification, cancellationToken);
+
+        if (itemOrDefault == null)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), $"query type {querySpecification.GetType().Name}");
+        }
+
+        return itemOrDefault;
     }
 
     public async Task<T> AddItemAsync(

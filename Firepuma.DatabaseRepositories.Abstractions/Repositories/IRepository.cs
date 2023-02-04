@@ -22,6 +22,14 @@ public interface IRepository<T> where T : IEntity
         IQuerySpecification<T> querySpecification,
         CancellationToken cancellationToken = default);
 
+    Task<T> GetItemAsync(
+        string id,
+        CancellationToken cancellationToken = default);
+
+    Task<T> GetItemAsync(
+        IQuerySpecification<T> querySpecification,
+        CancellationToken cancellationToken = default);
+
     Task<T> AddItemAsync(
         T item,
         CancellationToken cancellationToken = default);
