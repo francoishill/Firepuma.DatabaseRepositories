@@ -40,9 +40,9 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
 
         var items = await queryable.ToListAsync(cancellationToken);
 
-        Logger.LogInformation(
-            "Fetched items in collection {Collection}",
-            CollectionNameForLogs);
+        Logger.LogDebug(
+            "Fetched {Count} items in collection {Collection}",
+            items.Count, CollectionNameForLogs);
 
         return items;
     }
@@ -53,9 +53,9 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
 
         var count = await queryable.CountAsync(cancellationToken);
 
-        Logger.LogInformation(
-            "Counted items in collection {Collection}",
-            CollectionNameForLogs);
+        Logger.LogDebug(
+            "Counted {Count} items in collection {Collection}",
+            count, CollectionNameForLogs);
 
         return count;
     }
@@ -66,7 +66,7 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
             .Find(i => i.Id == id)
             .FirstOrDefaultAsync(cancellationToken);
 
-        Logger.LogInformation(
+        Logger.LogDebug(
             "Fetched item id {Id} from collection {Collection}",
             id, CollectionNameForLogs);
 

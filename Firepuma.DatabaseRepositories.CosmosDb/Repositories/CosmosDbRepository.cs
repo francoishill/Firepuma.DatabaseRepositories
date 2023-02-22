@@ -53,7 +53,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
             totalRequestCharge += response.RequestCharge;
         }
 
-        Logger.LogInformation(
+        Logger.LogDebug(
             "A total of {Count} items were fetched from container {Container} and consumed total {Charge} RUs",
             results.Count, Container.Id, totalRequestCharge);
 
@@ -68,7 +68,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
 
         var response = await queryable.CountAsync(cancellationToken: cancellationToken);
 
-        Logger.LogInformation(
+        Logger.LogDebug(
             "Counted items from container {Container}, which consumed {Charge} RUs",
             Container.Id, response.RequestCharge);
 
@@ -83,7 +83,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             var response = await Container.ReadItemAsync<T>(id, ResolvePartitionKey(id), cancellationToken: cancellationToken);
 
-            Logger.LogInformation(
+            Logger.LogDebug(
                 "Fetched item id {Id} from container {Container}, which consumed {Charge} RUs",
                 id, Container.Id, response.RequestCharge);
 

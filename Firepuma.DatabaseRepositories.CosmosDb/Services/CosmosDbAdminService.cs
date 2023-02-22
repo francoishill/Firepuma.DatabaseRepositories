@@ -33,7 +33,7 @@ internal class CosmosDbAdminService : ICosmosDbAdminService
             var throughputProperties = containerSpecification.ThroughputProperties;
             var requestOptions = containerSpecification.RequestOptions;
 
-            _logger.LogDebug(
+            _logger.LogInformation(
                 "Creating container {Container} with PartitionKeyPath {PartitionKeyPath} (throughput: {Throughput}, maxThroughput: {MaxThroughPut})",
                 container.Id, container.PartitionKeyPath, throughputProperties?.Throughput, throughputProperties?.AutoscaleMaxThroughput);
 
