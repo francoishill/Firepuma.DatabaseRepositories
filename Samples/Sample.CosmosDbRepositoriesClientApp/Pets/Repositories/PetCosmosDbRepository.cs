@@ -11,6 +11,7 @@ public class PetCosmosDbRepository : CosmosDbRepository<PetEntity>, IPetReposito
     {
     }
 
-    protected override string GenerateId(PetEntity entity) => $"{Guid.NewGuid().ToString()}:{entity.Type}";
+    public string GenerateId(string petType) => $"{Guid.NewGuid().ToString()}:{petType}";
+
     protected override PartitionKey ResolvePartitionKey(string entityId) => new(entityId.Split(':')[1]);
 }

@@ -1,4 +1,5 @@
 using Firepuma.DatabaseRepositories.MongoDb.Repositories;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Sample.MongoDbRepositoriesClientApp.Pets.Entities;
 
@@ -10,4 +11,6 @@ public class PetMongoDbRepository : MongoDbRepository<PetEntity>, IPetRepository
         : base(logger, collection)
     {
     }
+
+    public string GenerateId() => ObjectId.GenerateNewId().ToString();
 }

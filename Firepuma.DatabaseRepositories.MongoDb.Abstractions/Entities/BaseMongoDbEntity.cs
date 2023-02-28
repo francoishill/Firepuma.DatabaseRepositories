@@ -10,7 +10,7 @@ public class BaseMongoDbEntity : IEntity
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     [JsonProperty(PropertyName = "_id")]
-    public string? Id { get; set; }
+    public required string Id { get; set; } = null!;
 
     [JsonProperty(PropertyName = "ETag")]
     public string? ETag { get; set; }

@@ -23,6 +23,7 @@ public class PetsController : ControllerBase
     {
         var newPet = new PetEntity
         {
+            Id = _petRepository.GenerateId(),
             Type = request.Type,
             Name = request.Name,
             BornOn = request.BornOn ?? throw new ArgumentNullException($"{nameof(request.BornOn)} is required"),

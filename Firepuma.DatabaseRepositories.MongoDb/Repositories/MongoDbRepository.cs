@@ -6,7 +6,6 @@ using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
 using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Queries;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -27,8 +26,6 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
         Logger = logger;
         Collection = collection;
     }
-
-    private static string GenerateId() => ObjectId.GenerateNewId().ToString(); // generate and don't allow overwriting because BaseMongoDbEntity has BsonId for the Id field
 
     protected virtual string CollectionNameForLogs => Collection.CollectionNamespace.FullName;
 
@@ -114,12 +111,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
 
     public async Task<T> AddItemAsync(T item, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(item.Id))
+        if (string.IsNullOrWhiteSpace(item.Id))
         {
-            throw new InvalidOperationException($"Item Id should not be specified when calling MongoDbRepository.AddItemAsync, it is auto-generated (item id {item.Id})");
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling MongoDbRepository.AddItemAsync");
         }
 
-        item.Id = GenerateId();
         item.ETag = GenerateETag();
 
         await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
@@ -136,6 +132,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
         bool ignoreETag = false,
         CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(item.Id))
+        {
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling MongoDbRepository.UpsertItemAsync");
+        }
+
         var oldETag = item.ETag;
 
         var options = new ReplaceOptions
@@ -148,8 +149,6 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
                 ? i => i.Id == item.Id
                 : i => i.Id == item.Id && i.ETag == oldETag;
 
-        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-        item.Id ??= GenerateId();
         item.ETag = GenerateETag();
 
         Logger.LogInformation(

@@ -27,7 +27,6 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         Container = container;
     }
 
-    protected abstract string GenerateId(T entity);
     protected abstract PartitionKey ResolvePartitionKey(string entityId);
 
     public async Task<IEnumerable<T>> GetItemsAsync(
@@ -138,12 +137,10 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         T item,
         CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(item.Id))
+        if (string.IsNullOrWhiteSpace(item.Id))
         {
-            throw new InvalidOperationException($"Item Id should be specified when calling CosmosDbRepository.AddItemAsync, it is auto-generated (item id {item.Id})");
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling CosmosDbRepository.AddItemAsync");
         }
-
-        item.Id = GenerateId(item);
 
         var response = await Container.CreateItemAsync<T>(item, ResolvePartitionKey(item.Id), cancellationToken: cancellationToken);
 
@@ -159,15 +156,17 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         bool ignoreETag,
         CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(item.Id))
+        {
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling CosmosDbRepository.UpsertItemAsync");
+        }
+
         var options = new ItemRequestOptions();
 
         if (!ignoreETag)
         {
             options.IfMatchEtag = item.ETag;
         }
-
-        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-        item.Id ??= GenerateId(item);
 
         var response = await Container.UpsertItemAsync<T>(item, ResolvePartitionKey(item.Id), options, cancellationToken);
 

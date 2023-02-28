@@ -5,4 +5,5 @@ namespace Sample.CosmosDbRepositoriesClientApp.Pets.Repositories;
 
 public interface IPetRepository : IRepository<PetEntity>
 {
+    string GenerateId(string petType);
 }

@@ -5,4 +5,5 @@ namespace Sample.MongoDbRepositoriesClientApp.Pets.Repositories;
 
 public interface IPetRepository : IRepository<PetEntity>
 {
+    string GenerateId();
 }
