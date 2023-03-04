@@ -151,16 +151,16 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
 
         item.ETag = GenerateETag();
 
-        Logger.LogInformation(
-            "Upserted item id {Id} in collection {Collection}",
-            item.Id, CollectionNameForLogs);
-
         var replaceResult = await Collection.ReplaceOneAsync(filter, item, options, cancellationToken);
 
         if (!ignoreETag)
         {
             VerifyReplacedExactlyOneDocument(options, replaceResult);
         }
+
+        Logger.LogInformation(
+            "Upserted item id {Id} in collection {Collection}",
+            item.Id, CollectionNameForLogs);
 
         return item;
     }
