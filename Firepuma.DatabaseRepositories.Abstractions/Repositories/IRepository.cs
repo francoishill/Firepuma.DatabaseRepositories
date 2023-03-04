@@ -1,6 +1,8 @@
 ﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Firepuma.DatabaseRepositories.Abstractions.Repositories;
 
 // Thanks for inspiration to: https://medium.com/swlh/clean-architecture-with-partitioned-repository-pattern-using-azure-cosmos-db-62241854cbc5
