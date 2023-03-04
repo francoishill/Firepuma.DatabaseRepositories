@@ -31,6 +31,8 @@ public class PetsController : ControllerBase
         };
         newPet = await _petRepository.AddItemAsync(newPet, cancellationToken);
 
+        await _petRepository.SetInsertedTimestampAsync(newPet, cancellationToken);
+
         return newPet;
     }
 

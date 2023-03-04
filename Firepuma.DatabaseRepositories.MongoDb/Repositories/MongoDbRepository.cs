@@ -153,6 +153,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
 
         var replaceResult = await Collection.ReplaceOneAsync(filter, item, options, cancellationToken);
 
+        if (ignoreETag && replaceResult.MatchedCount == 0)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), item.Id);
+        }
+
         if (!ignoreETag)
         {
             VerifyReplacedExactlyOneDocument(options, replaceResult);
@@ -163,6 +168,56 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
             item.Id, CollectionNameForLogs);
 
         return item;
+    }
+
+    protected async Task UpdateItemAsync(
+        T item,
+        UpdateDefinition<T> updateDefinition,
+        bool ignoreETag = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(item.Id))
+        {
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling MongoDbRepository.UpdateItemAsync");
+        }
+
+        var oldETag = item.ETag;
+
+        var options = new UpdateOptions
+        {
+            IsUpsert = false,
+        };
+
+        Expression<Func<T, bool>> filter =
+            ignoreETag
+                ? i => i.Id == item.Id
+                : i => i.Id == item.Id && i.ETag == oldETag;
+
+        var newETag = GenerateETag();
+
+        var finalUpdateDefinition =
+            Builders<T>.Update.Combine(
+                updateDefinition,
+                Builders<T>.Update.Set(i => i.ETag, newETag));
+
+        // ETag field won't be updated automatically by the SDK since we used an Update Definition
+        item.ETag = newETag;
+
+        var updateResult = await Collection.UpdateOneAsync(filter, finalUpdateDefinition, options, cancellationToken);
+
+        if (ignoreETag && updateResult.MatchedCount == 0)
+        {
+            throw new DatabaseItemNotFoundException(typeof(T), item.Id);
+        }
+
+        if (!ignoreETag)
+        {
+            VerifyUpdatedExactlyOneDocument(options, updateResult);
+        }
+
+        Logger.LogInformation(
+            "Updated item id {Id} in collection {Collection}",
+            item.Id, CollectionNameForLogs);
     }
 
     public async Task DeleteItemAsync(
@@ -211,6 +266,38 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoD
         if (replaceResult.ModifiedCount == 0 || replaceResult.MatchedCount == 0)
         {
             if (replaceResult.UpsertedId != null && options is { IsUpsert: true })
+            {
+                // do nothing
+            }
+            else
+            {
+                throw new DocumentETagMismatchException();
+            }
+        }
+    }
+
+    private static void VerifyUpdatedExactlyOneDocument(
+        UpdateOptions options,
+        UpdateResult updateResult)
+    {
+        if (!updateResult.IsAcknowledged)
+        {
+            throw new InvalidOperationException("Expected mongo UpdateOneAsync to be automatically acknowledged");
+        }
+
+        if (!updateResult.IsModifiedCountAvailable)
+        {
+            throw new InvalidOperationException("Expected mongo UpdateOneAsync to have IsModifiedCountAvailable == TRUE");
+        }
+
+        if (updateResult.ModifiedCount > 1 || updateResult.MatchedCount > 1)
+        {
+            throw new InvalidOperationException("Expected mongo UpdateOneAsync to have ModifiedCount == 1 and MatchedCount == 1");
+        }
+
+        if (updateResult.ModifiedCount == 0 || updateResult.MatchedCount == 0)
+        {
+            if (updateResult.UpsertedId != null && options is { IsUpsert: true })
             {
                 // do nothing
             }

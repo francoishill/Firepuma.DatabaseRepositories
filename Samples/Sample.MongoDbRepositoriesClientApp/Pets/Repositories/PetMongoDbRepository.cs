@@ -13,4 +13,12 @@ public class PetMongoDbRepository : MongoDbRepository<PetEntity>, IPetRepository
     }
 
     public string GenerateId() => ObjectId.GenerateNewId().ToString();
+
+    public async Task SetInsertedTimestampAsync(PetEntity item, CancellationToken cancellationToken)
+    {
+        var updateDefinition = Builders<PetEntity>.Update
+            .CurrentDate(e => e.InsertedTimestamp);
+
+        await UpdateItemAsync(item, updateDefinition, false, cancellationToken);
+    }
 }

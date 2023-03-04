@@ -12,6 +12,8 @@ public class PetEntity : BaseMongoDbEntity
     public required DateTime BornOn { get; set; }
     public required DateTime ArrivedOn { get; set; }
 
+    public DateTime? InsertedTimestamp { get; set; }
+
     public static IEnumerable<CreateIndexModel<PetEntity>> GetSchemaIndexes()
     {
         return new[]
