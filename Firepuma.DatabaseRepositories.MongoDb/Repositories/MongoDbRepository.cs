@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
+using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
-using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
 using Firepuma.DatabaseRepositories.MongoDb.Queries;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -14,7 +14,7 @@ using MongoDB.Driver.Linq;
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Repositories;
 
-public abstract class MongoDbRepository<T> : IRepository<T> where T : BaseMongoDbEntity
+public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEntity
 {
     protected readonly ILogger Logger;
     protected readonly IMongoCollection<T> Collection;

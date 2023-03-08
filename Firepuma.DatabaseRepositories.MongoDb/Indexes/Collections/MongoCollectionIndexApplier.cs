@@ -1,10 +1,10 @@
-﻿using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
+﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
 using MongoDB.Driver;
 
 namespace Firepuma.DatabaseRepositories.MongoDb.Indexes.Collections;
 
 internal class MongoCollectionIndexApplier<TEntity> : IMongoCollectionIndexApplier
-    where TEntity : BaseMongoDbEntity
+    where TEntity : IEntity
 {
     private readonly IMongoCollection<TEntity> _collection;
     private readonly Func<IEnumerable<CreateIndexModel<TEntity>>> _indexesFactory;

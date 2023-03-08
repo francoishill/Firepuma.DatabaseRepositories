@@ -1,5 +1,5 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.Repositories;
-using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Entities;
+﻿using Firepuma.DatabaseRepositories.Abstractions.Entities;
+using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.MongoDb.Abstractions.Indexes;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration;
 using Firepuma.DatabaseRepositories.MongoDb.Configuration.Helpers;
@@ -62,7 +62,7 @@ public static class ServiceCollectionExtensions
         string collectionName,
         Func<ILogger<TClass>, IMongoCollection<TEntity>, IServiceProvider, TClass> classFactory,
         Func<IEnumerable<CreateIndexModel<TEntity>>> indexesFactory)
-        where TEntity : BaseMongoDbEntity
+        where TEntity : IEntity
         where TInterface : class, IRepository<TEntity>
         where TClass : class, TInterface
     {
