@@ -177,6 +177,13 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         return response.Resource;
     }
 
+    public async Task<T> UpsertItemAsync(
+        T item,
+        CancellationToken cancellationToken = default)
+    {
+        return await UpsertItemAsync(item, ignoreETag: false, cancellationToken);
+    }
+
     public async Task DeleteItemAsync(
         T item,
         bool ignoreETag,
@@ -196,6 +203,13 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         Logger.LogInformation(
             "Deleted item id {Id} from container {Container}, which consumed {Charge} RUs",
             item.Id, Container.Id, response.RequestCharge);
+    }
+
+    public async Task DeleteItemAsync(
+        T item,
+        CancellationToken cancellationToken)
+    {
+        await DeleteItemAsync(item, ignoreETag: false, cancellationToken);
     }
 
     protected virtual IQueryable<T> ApplyQuery(IQuerySpecification<T> querySpecification)

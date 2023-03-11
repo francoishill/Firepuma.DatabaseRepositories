@@ -170,6 +170,13 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         return item;
     }
 
+    public async Task<T> UpsertItemAsync(
+        T item,
+        CancellationToken cancellationToken = default)
+    {
+        return await UpsertItemAsync(item, ignoreETag: false, cancellationToken);
+    }
+
     protected async Task UpdateItemAsync(
         T item,
         UpdateDefinition<T> updateDefinition,
@@ -220,6 +227,15 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
             item.Id, CollectionNameForLogs);
     }
 
+    // ReSharper disable once UnusedMember.Global
+    protected async Task UpdateItemAsync(
+        T item,
+        UpdateDefinition<T> updateDefinition,
+        CancellationToken cancellationToken = default)
+    {
+        await UpdateItemAsync(item, updateDefinition, ignoreETag: false, cancellationToken);
+    }
+
     public async Task DeleteItemAsync(
         T item,
         bool ignoreETag = false,
@@ -242,6 +258,13 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         Logger.LogInformation(
             "Deleted item id {Id} from collection {Collection}",
             item.Id, CollectionNameForLogs);
+    }
+
+    public async Task DeleteItemAsync(
+        T item,
+        CancellationToken cancellationToken = default)
+    {
+        await DeleteItemAsync(item, ignoreETag: false, cancellationToken);
     }
 
     private static void VerifyReplacedExactlyOneDocument(

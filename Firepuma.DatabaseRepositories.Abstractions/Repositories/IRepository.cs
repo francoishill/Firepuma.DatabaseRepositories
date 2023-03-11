@@ -41,8 +41,16 @@ public interface IRepository<T> where T : IEntity
         bool ignoreETag = false,
         CancellationToken cancellationToken = default);
 
+    Task<T> UpsertItemAsync(
+        T item,
+        CancellationToken cancellationToken = default);
+
     Task DeleteItemAsync(
         T item,
         bool ignoreETag = false,
+        CancellationToken cancellationToken = default);
+
+    Task DeleteItemAsync(
+        T item,
         CancellationToken cancellationToken = default);
 }
