@@ -142,6 +142,10 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
             throw new InvalidOperationException($"Item Id is required to be non-empty before calling CosmosDbRepository.AddItemAsync");
         }
 
+        Logger.LogDebug(
+            "Will now add item id {Id} to container {Container}",
+            item.Id, Container.Id);
+
         var response = await Container.CreateItemAsync<T>(item, ResolvePartitionKey(item.Id), cancellationToken: cancellationToken);
 
         Logger.LogInformation(
@@ -167,6 +171,10 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             options.IfMatchEtag = item.ETag;
         }
+
+        Logger.LogDebug(
+            "Will now upsert item id {Id} in container {Container}",
+            item.Id, Container.Id);
 
         var response = await Container.UpsertItemAsync<T>(item, ResolvePartitionKey(item.Id), options, cancellationToken);
 
@@ -197,6 +205,10 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             options.IfMatchEtag = item.ETag;
         }
+
+        Logger.LogDebug(
+            "Will now delete item id {Id} from container {Container}",
+            item.Id, Container.Id);
 
         var response = await Container.DeleteItemAsync<T>(item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
 

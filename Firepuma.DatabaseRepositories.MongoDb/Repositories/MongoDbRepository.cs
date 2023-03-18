@@ -118,6 +118,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 
         item.ETag = GenerateETag();
 
+        Logger.LogDebug(
+            "Will now add item id {Id} to collection {Collection}",
+            item.Id, CollectionNameForLogs);
+
         await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
 
         Logger.LogInformation(
@@ -150,6 +154,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
                 : i => i.Id == item.Id && i.ETag == oldETag;
 
         item.ETag = GenerateETag();
+
+        Logger.LogDebug(
+            "Will now upsert item id {Id} in collection {Collection}",
+            item.Id, CollectionNameForLogs);
 
         var replaceResult = await Collection.ReplaceOneAsync(filter, item, options, cancellationToken);
 
@@ -210,6 +218,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         // ETag field won't be updated automatically by the SDK since we used an Update Definition
         item.ETag = newETag;
 
+        Logger.LogDebug(
+            "Will now update item id {Id} in collection {Collection}",
+            item.Id, CollectionNameForLogs);
+
         var updateResult = await Collection.UpdateOneAsync(filter, finalUpdateDefinition, options, cancellationToken);
 
         if (ignoreETag && updateResult.MatchedCount == 0)
@@ -247,6 +259,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
             ignoreETag
                 ? i => i.Id == item.Id
                 : i => i.Id == item.Id && i.ETag == oldETag;
+
+        Logger.LogDebug(
+            "Will now delete item id {Id} from collection {Collection}",
+            item.Id, CollectionNameForLogs);
 
         var deleteResult = await Collection.DeleteOneAsync(filter, cancellationToken);
 
