@@ -131,21 +131,21 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         return item;
     }
 
-    public async Task<T> UpsertItemAsync(
+    public async Task<T> ReplaceItemAsync(
         T item,
         bool ignoreETag = false,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(item.Id))
         {
-            throw new InvalidOperationException($"Item Id is required to be non-empty before calling MongoDbRepository.UpsertItemAsync");
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling MongoDbRepository.ReplaceItemAsync");
         }
 
         var oldETag = item.ETag;
 
         var options = new ReplaceOptions
         {
-            IsUpsert = true,
+            IsUpsert = false,
         };
 
         Expression<Func<T, bool>> filter =
@@ -156,7 +156,7 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         item.ETag = GenerateETag();
 
         Logger.LogDebug(
-            "Will now upsert item id {Id} in collection {Collection}",
+            "Will now replace item id {Id} in collection {Collection}",
             item.Id, CollectionNameForLogs);
 
         var replaceResult = await Collection.ReplaceOneAsync(filter, item, options, cancellationToken);
@@ -172,17 +172,17 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         }
 
         Logger.LogInformation(
-            "Upserted item id {Id} in collection {Collection}",
+            "Replaced item id {Id} in collection {Collection}",
             item.Id, CollectionNameForLogs);
 
         return item;
     }
 
-    public async Task<T> UpsertItemAsync(
+    public async Task<T> ReplaceItemAsync(
         T item,
         CancellationToken cancellationToken = default)
     {
-        return await UpsertItemAsync(item, ignoreETag: false, cancellationToken);
+        return await ReplaceItemAsync(item, ignoreETag: false, cancellationToken);
     }
 
     protected async Task UpdateItemAsync(

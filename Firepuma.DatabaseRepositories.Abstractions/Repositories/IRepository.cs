@@ -36,12 +36,12 @@ public interface IRepository<T> where T : IEntity
         T item,
         CancellationToken cancellationToken = default);
 
-    Task<T> UpsertItemAsync(
+    Task<T> ReplaceItemAsync(
         T item,
         bool ignoreETag = false,
         CancellationToken cancellationToken = default);
 
-    Task<T> UpsertItemAsync(
+    Task<T> ReplaceItemAsync(
         T item,
         CancellationToken cancellationToken = default);
 

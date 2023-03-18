@@ -1,4 +1,5 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
+﻿using System.Net;
+using Firepuma.DatabaseRepositories.Abstractions.Exceptions;
 using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories;
 using Firepuma.DatabaseRepositories.Abstractions.Repositories.Exceptions;
@@ -88,7 +89,7 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
 
             return response.Resource;
         }
-        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
             return default;
         }
@@ -155,14 +156,14 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         return response.Resource;
     }
 
-    public async Task<T> UpsertItemAsync(
+    public async Task<T> ReplaceItemAsync(
         T item,
         bool ignoreETag,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(item.Id))
         {
-            throw new InvalidOperationException($"Item Id is required to be non-empty before calling CosmosDbRepository.UpsertItemAsync");
+            throw new InvalidOperationException($"Item Id is required to be non-empty before calling CosmosDbRepository.ReplaceItemAsync");
         }
 
         var options = new ItemRequestOptions();
@@ -173,23 +174,34 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         }
 
         Logger.LogDebug(
-            "Will now upsert item id {Id} in container {Container}",
+            "Will now replace item id {Id} in container {Container}",
             item.Id, Container.Id);
 
-        var response = await Container.UpsertItemAsync<T>(item, ResolvePartitionKey(item.Id), options, cancellationToken);
+        try
+        {
+            var response = await Container.ReplaceItemAsync<T>(item, item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
 
-        Logger.LogInformation(
-            "Upserted item id {Id} in container {Container}, which consumed {Charge} RUs",
-            item.Id, Container.Id, response.RequestCharge);
+            Logger.LogInformation(
+                "Replace item id {Id} in container {Container}, which consumed {Charge} RUs",
+                item.Id, Container.Id, response.RequestCharge);
 
-        return response.Resource;
+            return response.Resource;
+        }
+        catch (CosmosException cosmosException) when (cosmosException.StatusCode == HttpStatusCode.PreconditionFailed)
+        {
+            Logger.LogWarning(
+                "Failed to replace item id {Id} in container {Container} due to PreconditionFailed response status but it consumed {Charge} RUs",
+                item.Id, Container.Id, cosmosException.RequestCharge);
+
+            throw new DocumentETagMismatchException();
+        }
     }
 
-    public async Task<T> UpsertItemAsync(
+    public async Task<T> ReplaceItemAsync(
         T item,
         CancellationToken cancellationToken = default)
     {
-        return await UpsertItemAsync(item, ignoreETag: false, cancellationToken);
+        return await ReplaceItemAsync(item, ignoreETag: false, cancellationToken);
     }
 
     public async Task DeleteItemAsync(
@@ -210,11 +222,22 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
             "Will now delete item id {Id} from container {Container}",
             item.Id, Container.Id);
 
-        var response = await Container.DeleteItemAsync<T>(item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
+        try
+        {
+            var response = await Container.DeleteItemAsync<T>(item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
 
-        Logger.LogInformation(
-            "Deleted item id {Id} from container {Container}, which consumed {Charge} RUs",
-            item.Id, Container.Id, response.RequestCharge);
+            Logger.LogInformation(
+                "Deleted item id {Id} from container {Container}, which consumed {Charge} RUs",
+                item.Id, Container.Id, response.RequestCharge);
+        }
+        catch (CosmosException cosmosException) when (cosmosException.StatusCode == HttpStatusCode.PreconditionFailed)
+        {
+            Logger.LogWarning(
+                "Failed to delete id {Id} from container {Container} due to PreconditionFailed response status but it consumed {Charge} RUs",
+                item.Id, Container.Id, cosmosException.RequestCharge);
+
+            throw new DocumentETagMismatchException();
+        }
     }
 
     public async Task DeleteItemAsync(
