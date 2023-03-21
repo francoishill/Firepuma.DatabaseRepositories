@@ -1,6 +1,4 @@
-﻿using Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications.Exceptions;
-
-namespace Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
+﻿namespace Firepuma.DatabaseRepositories.Abstractions.QuerySpecifications;
 
 public abstract class QuerySpecificationEvaluatorBase<T> : IQuerySpecificationEvaluator<T> where T : class
 {
@@ -22,29 +20,20 @@ public abstract class QuerySpecificationEvaluatorBase<T> : IQuerySpecificationEv
 
         if (querySpecification.OrderExpressions.Any())
         {
-            if (querySpecification.OrderExpressions.Count(x => x.OrderType is OrderTypeEnum.OrderBy or OrderTypeEnum.OrderByDescending) > 1)
-            {
-                throw new DuplicateOrderChainException();
-            }
-
             IOrderedQueryable<T>? orderedQuery = null;
             foreach (var orderExpression in querySpecification.OrderExpressions)
             {
-                if (orderExpression.OrderType == OrderTypeEnum.OrderBy)
+                if (orderedQuery == null)
                 {
-                    orderedQuery = queryable.OrderBy(orderExpression.KeySelector);
+                    orderedQuery = orderExpression.OrderType == OrderTypeEnum.Ascending
+                        ? queryable.OrderBy(orderExpression.KeySelector)
+                        : queryable.OrderByDescending(orderExpression.KeySelector);
                 }
-                else if (orderExpression.OrderType == OrderTypeEnum.OrderByDescending)
+                else
                 {
-                    orderedQuery = queryable.OrderByDescending(orderExpression.KeySelector);
-                }
-                else if (orderExpression.OrderType == OrderTypeEnum.ThenBy)
-                {
-                    orderedQuery = orderedQuery?.ThenBy(orderExpression.KeySelector);
-                }
-                else if (orderExpression.OrderType == OrderTypeEnum.ThenByDescending)
-                {
-                    orderedQuery = orderedQuery?.ThenByDescending(orderExpression.KeySelector);
+                    orderedQuery = orderExpression.OrderType == OrderTypeEnum.Ascending
+                        ? orderedQuery.ThenBy(orderExpression.KeySelector)
+                        : orderedQuery.ThenByDescending(orderExpression.KeySelector);
                 }
             }
 

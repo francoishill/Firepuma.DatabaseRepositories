@@ -147,13 +147,21 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
             "Will now add item id {Id} to container {Container}",
             item.Id, Container.Id);
 
-        var response = await Container.CreateItemAsync<T>(item, ResolvePartitionKey(item.Id), cancellationToken: cancellationToken);
+        try
+        {
+            var response = await Container.CreateItemAsync<T>(item, ResolvePartitionKey(item.Id), cancellationToken: cancellationToken);
 
-        Logger.LogInformation(
-            "Added item id {Id} to container {Container}, which consumed {Charge} RUs",
-            item.Id, Container.Id, response.RequestCharge);
+            Logger.LogInformation(
+                "Added item id {Id} to container {Container}, which consumed {Charge} RUs",
+                item.Id, Container.Id, response.RequestCharge);
 
-        return response.Resource;
+            return response.Resource;
+        }
+        catch (CosmosException cosmosException) when (cosmosException.StatusCode == HttpStatusCode.Conflict)
+        {
+            //https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.client.documentclient.upsertdocumentasync?view=azure-dotnet
+            throw new DuplicateDatabaseEntityException($"Duplicate id/key detected, unable to insert item with Id {item.Id}", cosmosException);
+        }
     }
 
     public async Task<T> ReplaceItemAsync(

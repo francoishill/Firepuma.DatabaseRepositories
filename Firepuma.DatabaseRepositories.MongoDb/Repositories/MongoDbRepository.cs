@@ -122,13 +122,20 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
             "Will now add item id {Id} to collection {Collection}",
             item.Id, CollectionNameForLogs);
 
-        await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
+        try
+        {
+            await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
 
-        Logger.LogInformation(
-            "Added item id {Id} to collection {Collection}",
-            item.Id, CollectionNameForLogs);
+            Logger.LogInformation(
+                "Added item id {Id} to collection {Collection}",
+                item.Id, CollectionNameForLogs);
 
-        return item;
+            return item;
+        }
+        catch (MongoWriteException mongoWriteException) when (mongoWriteException.WriteError.Code == 11000)
+        {
+            throw new DuplicateDatabaseEntityException($"Duplicate id/key detected, unable to insert item with Id {item.Id}", mongoWriteException);
+        }
     }
 
     public async Task<T> ReplaceItemAsync(
