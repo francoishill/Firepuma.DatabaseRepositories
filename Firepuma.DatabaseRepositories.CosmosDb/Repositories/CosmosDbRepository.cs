@@ -19,13 +19,22 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
 {
     protected readonly ILogger Logger;
     protected readonly Container Container;
+    protected readonly LogLevel ItemAddedLogLevel;
+    protected readonly LogLevel ItemReplacedLogLevel;
+    protected readonly LogLevel ItemDeletedLogLevel;
 
     protected CosmosDbRepository(
         ILogger logger,
-        Container container)
+        Container container,
+        LogLevel itemAddedLogLevel = LogLevel.Information,
+        LogLevel itemReplacedLogLevel = LogLevel.Information,
+        LogLevel itemDeletedLogLevel = LogLevel.Information)
     {
         Logger = logger;
         Container = container;
+        ItemAddedLogLevel = itemAddedLogLevel;
+        ItemReplacedLogLevel = itemReplacedLogLevel;
+        ItemDeletedLogLevel = itemDeletedLogLevel;
     }
 
     protected abstract PartitionKey ResolvePartitionKey(string entityId);
@@ -151,7 +160,8 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             var response = await Container.CreateItemAsync<T>(item, ResolvePartitionKey(item.Id), cancellationToken: cancellationToken);
 
-            Logger.LogInformation(
+            Logger.Log(
+                ItemAddedLogLevel,
                 "Added item id {Id} to container {Container}, which consumed {Charge} RUs",
                 item.Id, Container.Id, response.RequestCharge);
 
@@ -189,7 +199,8 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             var response = await Container.ReplaceItemAsync<T>(item, item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
 
-            Logger.LogInformation(
+            Logger.Log(
+                ItemReplacedLogLevel,
                 "Replace item id {Id} in container {Container}, which consumed {Charge} RUs",
                 item.Id, Container.Id, response.RequestCharge);
 
@@ -234,7 +245,8 @@ public abstract class CosmosDbRepository<T> : IRepository<T> where T : BaseCosmo
         {
             var response = await Container.DeleteItemAsync<T>(item.Id, ResolvePartitionKey(item.Id), options, cancellationToken);
 
-            Logger.LogInformation(
+            Logger.Log(
+                ItemDeletedLogLevel,
                 "Deleted item id {Id} from container {Container}, which consumed {Charge} RUs",
                 item.Id, Container.Id, response.RequestCharge);
         }

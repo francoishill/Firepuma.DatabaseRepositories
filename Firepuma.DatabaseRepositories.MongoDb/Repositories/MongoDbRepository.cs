@@ -18,13 +18,25 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 {
     protected readonly ILogger Logger;
     protected readonly IMongoCollection<T> Collection;
+    protected readonly LogLevel ItemAddedLogLevel;
+    protected readonly LogLevel ItemReplacedLogLevel;
+    protected readonly LogLevel ItemUpdatedLogLevel;
+    protected readonly LogLevel ItemDeletedLogLevel;
 
     protected MongoDbRepository(
         ILogger logger,
-        IMongoCollection<T> collection)
+        IMongoCollection<T> collection,
+        LogLevel itemAddedLogLevel = LogLevel.Information,
+        LogLevel itemReplacedLogLevel = LogLevel.Information,
+        LogLevel itemUpdatedLogLevel = LogLevel.Information,
+        LogLevel itemDeletedLogLevel = LogLevel.Information)
     {
         Logger = logger;
         Collection = collection;
+        ItemAddedLogLevel = itemAddedLogLevel;
+        ItemReplacedLogLevel = itemReplacedLogLevel;
+        ItemUpdatedLogLevel = itemUpdatedLogLevel;
+        ItemDeletedLogLevel = itemDeletedLogLevel;
     }
 
     protected virtual string CollectionNameForLogs => Collection.CollectionNamespace.FullName;
@@ -126,7 +138,8 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         {
             await Collection.InsertOneAsync(item, cancellationToken: cancellationToken);
 
-            Logger.LogInformation(
+            Logger.Log(
+                ItemAddedLogLevel,
                 "Added item id {Id} to collection {Collection}",
                 item.Id, CollectionNameForLogs);
 
@@ -175,10 +188,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 
         if (!ignoreETag)
         {
-            VerifyReplacedExactlyOneDocument(options, replaceResult);
+            VerifyReplacedExactlyOneDocument(item.Id, options, replaceResult);
         }
 
-        Logger.LogInformation(
+        Logger.Log(
+            ItemReplacedLogLevel,
             "Replaced item id {Id} in collection {Collection}",
             item.Id, CollectionNameForLogs);
 
@@ -238,10 +252,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 
         if (!ignoreETag)
         {
-            VerifyUpdatedExactlyOneDocument(options, updateResult);
+            VerifyUpdatedExactlyOneDocument(item.Id, options, updateResult);
         }
 
-        Logger.LogInformation(
+        Logger.Log(
+            ItemUpdatedLogLevel,
             "Updated item id {Id} in collection {Collection}",
             item.Id, CollectionNameForLogs);
     }
@@ -275,10 +290,11 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 
         if (!ignoreETag)
         {
-            VerifyDeleteExactlyOneDocument(deleteResult);
+            VerifyDeleteExactlyOneDocument(item.Id, deleteResult);
         }
 
-        Logger.LogInformation(
+        Logger.Log(
+            ItemDeletedLogLevel,
             "Deleted item id {Id} from collection {Collection}",
             item.Id, CollectionNameForLogs);
     }
@@ -290,7 +306,8 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
         await DeleteItemAsync(item, ignoreETag: false, cancellationToken);
     }
 
-    private static void VerifyReplacedExactlyOneDocument(
+    private void VerifyReplacedExactlyOneDocument(
+        string itemId,
         ReplaceOptions options,
         ReplaceOneResult replaceResult)
     {
@@ -317,12 +334,17 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
             }
             else
             {
+                Logger.LogWarning(
+                    "Failed to replace item id {Id} from collection {Collection} due to PreconditionFailed response status",
+                    itemId, CollectionNameForLogs);
+
                 throw new DocumentETagMismatchException();
             }
         }
     }
 
-    private static void VerifyUpdatedExactlyOneDocument(
+    private void VerifyUpdatedExactlyOneDocument(
+        string itemId,
         UpdateOptions options,
         UpdateResult updateResult)
     {
@@ -349,12 +371,17 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
             }
             else
             {
+                Logger.LogWarning(
+                    "Failed to update item id {Id} from collection {Collection} due to PreconditionFailed response status",
+                    itemId, CollectionNameForLogs);
+
                 throw new DocumentETagMismatchException();
             }
         }
     }
 
-    private static void VerifyDeleteExactlyOneDocument(
+    private void VerifyDeleteExactlyOneDocument(
+        string itemId,
         DeleteResult deleteResult)
     {
         if (!deleteResult.IsAcknowledged)
@@ -369,6 +396,10 @@ public abstract class MongoDbRepository<T> : IRepository<T> where T : class, IEn
 
         if (deleteResult.DeletedCount == 0)
         {
+            Logger.LogWarning(
+                "Failed to delete item id {Id} from collection {Collection} due to PreconditionFailed response status",
+                itemId, CollectionNameForLogs);
+
             throw new DocumentETagMismatchException();
         }
     }
